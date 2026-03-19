@@ -8,6 +8,7 @@ on:
 jobs:
   windows:
     strategy:
+      fail-fast: false  # THÊM DÒNG NÀY: Một bản lỗi thì các bản khác vẫn chạy tiếp
       matrix:
         arch: ["-bmi2", "-modern"]
     runs-on: windows-latest
@@ -21,7 +22,7 @@ jobs:
           cd src
           make clean
           make -j build COMP=mingw ARCH=x86-64${{ matrix.arch }} \
-               EXE=pikafish${{ matrix.arch }}.exe
+                EXE=pikafish${{ matrix.arch }}.exe
           strip pikafish${{ matrix.arch }}.exe
 
       - name: Package artifact files
@@ -43,6 +44,7 @@ jobs:
 
   linux:
     strategy:
+      fail-fast: false # THÊM DÒNG NÀY: Để cứu bản Linux nếu Windows có vấn đề
       matrix:
         arch: ["-bmi2", "-modern"]
     runs-on: ubuntu-22.04
@@ -55,7 +57,7 @@ jobs:
           cd src
           make clean
           make -j build COMP=gcc ARCH=x86-64${{ matrix.arch }} \
-               EXE=pikafish${{ matrix.arch }}
+                EXE=pikafish${{ matrix.arch }}
           strip pikafish${{ matrix.arch }}
 
       - name: Package artifact files
@@ -74,7 +76,7 @@ jobs:
             NNUE-License.txt
             README.md
             Top CPU Contributors.txt
-          
+            
   Pikafish-MacOS:
     name: MacOS-apple-silicon
     runs-on: macos-latest
@@ -103,8 +105,6 @@ jobs:
           cd ../Wiki
           rm -rf .git
 
-      # Artifacts automatically get zipped.
-      # To avoid double-zipping, we use the unzipped directory
       - uses: actions/upload-artifact@v4
         with:
           name: Pikafish-MacOS-apple-silicon
@@ -114,12 +114,6 @@ jobs:
             AUTHORS
             CONTRIBUTING.md
             Copying.txt
-            README.md
-            Top CPU Contributors.txt
-            linux/pikafish${{ matrix.arch }}
-            AUTHORS
-            Copying.txt
-            NNUE-License.txt
             README.md
             Top CPU Contributors.txt
 
